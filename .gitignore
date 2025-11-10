@@ -1,0 +1,47 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.venv/
+venv/
+ENV/
+
+# MATLAB
+*.asv
+*.m~
+param.mat
+
+# BioNetGen generated files
+*.xml
+*.gdat
+*.cdat
+*.net
+*.species
+*.rxns
+*.groups
+*_network.txt
+
+# Simulation results
+*_results.csv
+*_results.mat
+*.png
+*.pdf
+*.eps
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb
+
+# OS
+.DS_Store
+Thumbs.db
+*~
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo

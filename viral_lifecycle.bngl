@@ -1,0 +1,142 @@
+begin model
+
+begin parameters
+    # Viral lifecycle parameters from Param.xlsx
+    k_en      2.000000e-03   # Virus entry/internalization rate (1/min)
+    k_f       5.166667e-04   # Viral fusion rate (1/min)
+    k_a       6.000000e-07   # Virus assembly rate (1/(molecules*min))
+    k_e       1.100000e-03   # RNA export to cytoplasm rate (1/min)
+    k_r       6.000000e-02   # RNA return to membrane rate (1/min)
+    k_c       4.333333e-02   # Replication complex formation rate (1/(molecules*min))
+    k_t       3.950000e-01   # Protein translation rate (1/min)
+    tau       3.480000e+02   # Time constant for membrane formation (min)
+    a_RC      4.666667e-04   # RC activation/maturation rate (1/min)
+    rcsat     8.800000e+01   # RC saturation level (molecules)
+    mu_r      4.166667e-03   # RNA degradation rate (1/min)
+    mu_p      1.833333e-03   # Protein degradation rate (1/min)
+    mu_V_I    6.666667e-04   # Intracellular virus degradation rate (1/min)
+    mu_V_E    1.000000e-04   # Extracellular virus degradation rate (1/min)
+    nSP       1.800000e+02   # Number of structural proteins per virion
+
+    # Initial conditions (from RunThis.m, line 106: MOI=10)
+    V_0_init     100.0  # Initial virus input (MOI=10)
+    V_E_init     0.0
+    V_I_init     0.0
+    R_cyt_init   0.0
+    R_CM_init    0.0
+    P_S_init     0.0
+    P_NS_init    0.0
+    RC_CM_init   0.0
+    R_ds_init    0.0
+
+    # Simulation parameters
+    t_end        2880   # 48 hours * 60 min/hour
+end parameters
+
+begin molecule types
+    V_E()      # Extracellular virus
+    V_0()      # Virus before entry (initial virus)
+    V_I()      # Intracellular virus
+    R_cyt()    # Cytoplasmic (+) RNA
+    R_CM()     # Cell membrane-associated (+) RNA
+    P_S()      # Structural proteins
+    P_NS()     # Non-structural proteins
+    RC_CM()    # Replication complex at cell membrane
+    R_ds()     # Double-stranded RNA
+end molecule types
+
+begin seed species
+    V_E()      V_E_init
+    V_0()      V_0_init
+    V_I()      V_I_init
+    R_cyt()    R_cyt_init
+    R_CM()     R_CM_init
+    P_S()      P_S_init
+    P_NS()     P_NS_init
+    RC_CM()    RC_CM_init
+    R_ds()     R_ds_init
+end seed species
+
+begin observables
+    Molecules V_E_obs      V_E()
+    Molecules V_0_obs      V_0()
+    Molecules V_I_obs      V_I()
+    Molecules R_cyt_obs    R_cyt()
+    Molecules R_CM_obs     R_CM()
+    Molecules P_S_obs      P_S()
+    Molecules P_NS_obs     P_NS()
+    Molecules RC_CM_obs    RC_CM()
+    Molecules R_ds_obs     R_ds()
+end observables
+
+begin functions
+    # Membrane formation time-dependent function
+    # f_CM = 1 - exp(-(t/tau)^4)
+    f_CM() = 1 - exp(-(t/tau)^4)
+
+    # RC formation rate with saturation
+    # RC_form_rate = k_c * R_cyt * P_NS * (f_CM - RC_CM/rcsat)
+    RC_form_rate() = k_c * R_cyt_obs * P_NS_obs * (f_CM() - RC_CM_obs/rcsat)
+end functions
+
+begin reaction rules
+    # 1. Virus entry/internalization
+    # dV_0 = -k_en * V_0
+    V_0() -> V_I()  k_en
+
+    # 2. Intracellular virus fusion (releases RNA)
+    # dV_I = k_en*V_0 - k_f*V_I - mu_V_I*V_I
+    V_I() -> R_cyt()  k_f
+
+    # 3. Intracellular virus degradation
+    V_I() -> 0  mu_V_I
+
+    # 4. RNA export from membrane to cytoplasm
+    # dR_CM = k_r*RC_CM - k_e*R_CM
+    R_CM() -> R_cyt()  k_e
+
+    # 5. Protein translation from cytoplasmic RNA
+    # dP_S = k_t*R_cyt - k_a*nSP*P_S*R_cyt - mu_p*P_S
+    # dP_NS = k_t*R_cyt - RC_form_rate - mu_p*P_NS
+    R_cyt() -> R_cyt() + P_S()  k_t
+    R_cyt() -> R_cyt() + P_NS()  k_t
+
+    # 6. Virus assembly and release
+    # dV_E = k_a*P_S*R_cyt - mu_V_E*V_E
+    # Simplified: P_S + R_cyt -> V_E + P_S (P_S acts catalytically, stoichiometry handled by nSP parameter)
+    P_S() + R_cyt() -> P_S() + V_E()  k_a*nSP
+
+    # 7. Replication complex formation (modeled using DeleteMolecules for consumed reactants)
+    # RC_form_rate = k_c * R_cyt * P_NS * (f_CM - RC_CM/rcsat)
+    # This is a conditional rate - implemented via MMrate function
+    # When f_CM > RC_CM/rcsat, complex forms
+    R_cyt() + P_NS() -> RC_CM()  RC_form_rate()
+
+    # 8. RC maturation/activation produces membrane RNA and dsRNA
+    # dRC_CM = RC_form_rate - a_RC*RC_CM
+    # dR_ds = a_RC*RC_CM - mu_r*R_ds
+    RC_CM() -> R_CM() + R_ds()  a_RC
+
+    # 9. RNA recycling from replication complex back to membrane
+    # dR_CM = k_r*RC_CM - k_e*R_CM
+    RC_CM() -> R_CM()  k_r
+
+    # 10. Cytoplasmic RNA degradation
+    R_cyt() -> 0  mu_r
+
+    # 11. dsRNA degradation
+    R_ds() -> 0  mu_r
+
+    # 12. Protein degradation
+    P_S() -> 0  mu_p
+    P_NS() -> 0  mu_p
+
+    # 13. Extracellular virus degradation
+    V_E() -> 0  mu_V_E
+end reaction rules
+
+end model
+
+# Simulation commands
+generate_network({overwrite=>1})
+simulate({method=>"ode",t_start=>0,t_end=>t_end,n_steps=>100,atol=>1e-10,rtol=>1e-8})
