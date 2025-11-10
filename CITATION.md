@@ -18,7 +18,7 @@ These files are included in this repository for validation and reference purpose
 If you use this BioNetGen implementation in your research, please cite:
 
 **Faeder, J.R. (2025).** BioNetGen Implementation of Viral Lifecycle Model.
-GitHub repository: https://github.com/[your-username]/viral-lifecycle-bngl
+GitHub repository: https://github.com/jrfaeder/viral-lifecycle-bngl
 
 ## BioNetGen
 

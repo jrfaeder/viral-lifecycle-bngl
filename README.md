@@ -21,7 +21,7 @@ The model is implemented in BioNetGen Language (BNGL) and can be simulated using
 
 ```bash
 # Clone the repository
-git clone https://github.com/[your-username]/viral-lifecycle-bngl.git
+git clone https://github.com/jrfaeder/viral-lifecycle-bngl.git
 cd viral-lifecycle-bngl
 
 # Install dependencies
@@ -213,7 +213,7 @@ If you use this code in your research, please cite:
   author = {Faeder, James R.},
   title = {BioNetGen Implementation of Viral Lifecycle Model},
   year = {2025},
-  url = {https://github.com/[your-username]/viral-lifecycle-bngl}
+  url = {https://github.com/jrfaeder/viral-lifecycle-bngl}
 }
 ```
 
