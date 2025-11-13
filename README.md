@@ -221,7 +221,7 @@ See [CITATION.md](CITATION.md) for complete citation information, including the 
 
 ## Original Model
 
-This implementation is based on the integrated virus-immune model developed by Boddepalli et al. The original MATLAB files (`ODEs.m`, `Param.xlsx`, `Param_vector.m`) are included for validation and reference.
+This implementation is based on the integrated virus-immune model developed by Boddepalli et al. (2025), available at https://www.biorxiv.org/content/10.1101/2025.06.17.660089v3. The original MATLAB files (`ODEs.m`, `Param.xlsx`, `Param_vector.m`) are included for validation and reference.
 
 ## License
 
@@ -257,7 +257,7 @@ Contributions are welcome! Please feel free to:
 
 ## Acknowledgments
 
-- Original model: Boddepalli et al.
+- Original model: Boddepalli et al. (2025) - https://www.biorxiv.org/content/10.1101/2025.06.17.660089v3
 - BioNetGen development team
 - libroadrunner development team
 

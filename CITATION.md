@@ -4,7 +4,9 @@
 
 This BioNetGen implementation is based on the integrated virus-immune model developed by:
 
-**Boddepalli et al. (2025)** - Integrated Virus-Immune Model
+**Boddepalli R, Chhajer H, Roy R.** Integrative Modelling of Innate Immune Response Dynamics during Virus Infection. bioRxiv; 2025. p. 2025.06.17.660089. doi:10.1101/2025.06.17.660089
+
+Available at: https://www.biorxiv.org/content/10.1101/2025.06.17.660089v3
 
 The original MATLAB implementation includes:
 - `ODEs.m` - Complete ODE system for virus-immune interactions
