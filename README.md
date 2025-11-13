@@ -4,7 +4,12 @@
 [![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
 [![BioNetGen](https://img.shields.io/badge/BioNetGen-2.8+-green.svg)](https://bionetgen.org)
 
-A BioNetGen (BNGL) implementation of a viral lifecycle model, with Python/libroadrunner simulation tools and MATLAB validation code.
+A BioNetGen (BNGL) reimplementation of the viral lifecycle model from:
+
+**Boddepalli R, Chhajer H, Roy R.** Integrative Modelling of Innate Immune Response Dynamics during Virus Infection. bioRxiv; 2025. doi:10.1101/2025.06.17.660089
+https://www.biorxiv.org/content/10.1101/2025.06.17.660089v3
+
+This repository provides a rule-based implementation of the viral lifecycle portion of the Boddepalli et al. model, with Python/libroadrunner simulation tools and MATLAB validation code.
 
 ## Overview
 
